@@ -184,14 +184,17 @@
   <h1 (click)="goHome()" style="cursor: pointer;">TP03 - Gestion des pollutions</h1>
 
   <div style="margin-top:8px;">
-    <ng-container *ngIf="isLoggedIn; else loggedOut">
-      <span style="margin-right:12px;">Bonjour {{ username || 'utilisateur' }}</span>
+    <ng-container *ngIf="isLoggedIn$ | async; else loggedOut">
+      <span style="margin-right:12px;">Bonjour {{ (user$ | async)?.nom || 'utilisateur' }}</span>
+      <button (click)="onFavorites()" style="margin-left:8px;">
+        ❤️ Favoris ({{ favoritesCount }})
+      </button>
+      <button (click)="onUserList()" style="margin-left:8px;">Utilisateurs</button>
       <button (click)="onLogout()" style="margin-left:8px;">Se déconnecter</button>
     </ng-container>
     <ng-template #loggedOut>
       <button (click)="onLogin()">Se connecter</button>
     </ng-template>
-    <button (click)="onUserList()">Utilisateurs</button>
   </div>
 </header>
 <main>

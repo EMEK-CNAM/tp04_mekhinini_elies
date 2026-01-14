@@ -5,6 +5,7 @@ import { PollutionList } from './pollution-list/pollution-list';
 import { PollutionDetail } from './pollution-detail/pollution-detail';
 import { PollutionForm } from './pollution-form/pollution-form';
 import { UserList } from './user-list/user-list';
+import { Favorites } from './favorites/favorites';
 
 export const routes: Routes = [
     { path: 'login', component: LoginFormComponent },
@@ -14,6 +15,7 @@ export const routes: Routes = [
     { path: 'pollutions/:id/edit', component: PollutionForm },
     { path: 'pollutions/:id', component: PollutionDetail },
     { path: 'users', component: UserList },
+    { path: 'favorites', component: Favorites },
     { path: '', redirectTo: '/pollutions', pathMatch: 'full' },
     { path: '**', redirectTo: '/pollutions' }
 ];

@@ -1,15 +1,39 @@
 <div class="pollution-list-container">
     <div class="header">
         <h2>Liste des pollutions</h2>
+
+        <!-- Barre de recherche -->
+        <div class="search-box">
+            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+                placeholder="Rechercher par titre, lieu ou description..." class="search-input" />
+        </div>
+
+        <!-- Filtre par type -->
+        <div class="filter-box">
+            <label for="typeFilter">Type :</label>
+            <select id="typeFilter" [(ngModel)]="filterType" (change)="onFilterChange()">
+                <option *ngFor="let type of pollutionTypes" [value]="type.value">
+                    {{ type.label }}
+                </option>
+            </select>
+        </div>
+
         <button (click)="newForm()" class="btn-primary">Nouvelle déclaration</button>
     </div>
 
-    <div class="pollution-grid" *ngIf="pollutions.length > 0; else noPollutions">
-        <div class="pollution-card" *ngFor="let pollution of pollutions">
+    <div *ngIf="loading$ | async" class="loading">Chargement...</div>
+
+    <div class="pollution-grid" *ngIf="(pollutions$ | async)?.length! > 0; else noPollutions">
+        <div class="pollution-card" *ngFor="let pollution of pollutions$ | async">
+            <button class="favorite-btn" [class.is-favorite]="isFavorite(pollution.id)"
+                (click)="toggleFavorite(pollution.id, $event)" title="Ajouter aux favoris">
+                {{ isFavorite(pollution.id) ? '❤️' : '🤍' }}
+            </button>
+
             <h3>{{ pollution.titre }}</h3>
+            <p class="type-badge">{{ pollution.type_pollution }}</p>
             <p><strong>Lieu:</strong> {{ pollution.lieu }}</p>
             <p><strong>Date:</strong> {{ pollution.date_observation | date:'short' }}</p>
-            <p><strong>Type:</strong> {{ pollution.type_pollution }}</p>
             <p class="description">{{ pollution.description }}</p>
             <button (click)="goToDetail(pollution.id!)" class="btn-detail">Détails</button>
             <button (click)="delete(pollution.id)" class="btn-delete">Supprimer</button>

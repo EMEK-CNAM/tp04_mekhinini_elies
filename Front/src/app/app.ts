@@ -3,6 +3,10 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FavoritesService } from './services/favorites.service';
+import { Store } from '@ngxs/store';
+import { CheckAuth, Logout } from './store/auth.state';
+import { AuthState } from './store/auth.state';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,26 +16,23 @@ import { FavoritesService } from './services/favorites.service';
   styleUrls: ['./app.css']
 })
 export class App implements OnInit {
-  isLoggedIn = false;
-  username?: string;
+  isLoggedIn$: Observable<boolean>;
+  user$: Observable<any>;
   favoritesCount = 0;
 
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private favoritesService: FavoritesService
-  ) { }
+    private favoritesService: FavoritesService,
+    private store: Store
+  ) {
+    this.isLoggedIn$ = this.store.select(AuthState.isAuthenticated);
+    this.user$ = this.store.select(AuthState.user);
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const stored = localStorage.getItem('app:isLoggedIn');
-      if (stored !== null) {
-        this.isLoggedIn = stored === 'true';
-      }
-      const user = localStorage.getItem('app:username');
-      if (user) {
-        this.username = user;
-      }
+      this.store.dispatch(new CheckAuth());
     }
 
     this.favoritesService.favorites$.subscribe(favorites => {
@@ -48,12 +49,7 @@ export class App implements OnInit {
   }
 
   onLogout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('app:isLoggedIn');
-      localStorage.removeItem('app:username');
-    }
-    this.isLoggedIn = false;
-    this.username = undefined;
+    this.store.dispatch(new Logout());
     this.favoritesService.clearCurrentUser();
     this.router.navigate(['/']);
   }

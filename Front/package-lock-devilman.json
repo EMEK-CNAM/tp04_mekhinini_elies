@@ -16,9 +16,6 @@
         "@angular/platform-server": "^20.3.0",
         "@angular/router": "^20.3.11",
         "@angular/ssr": "^20.3.3",
-        "@ngxs/devtools-plugin": "^20.1.0",
-        "@ngxs/logger-plugin": "^20.1.0",
-        "@ngxs/store": "^20.1.0",
         "express": "^5.1.0",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0",
@@ -1428,59 +1425,6 @@
       ],
       "engines": {
         "node": ">= 10"
-      }
-    },
-    "node_modules/@ngxs/devtools-plugin": {
-      "version": "20.1.0",
-      "resolved": "https://registry.npmjs.org/@ngxs/devtools-plugin/-/devtools-plugin-20.1.0.tgz",
-      "integrity": "sha512-230f6MEhH4lowjsVSlhGf6fGIA+Y/2dM8K5kjQqeE0uvnmQ9HnXBFaLFyPaLJNjfi7mXMFilXnkeKd1G2chKeQ==",
-      "license": "MIT",
-      "dependencies": {
-        "tslib": "^2.3.0"
-      },
-      "funding": {
-        "type": "opencollective",
-        "url": "https://opencollective.com/ngxs"
-      },
-      "peerDependencies": {
-        "@angular/core": ">=20.0.0 <21.0.0",
-        "@ngxs/store": "^20.1.0 || ^20.1.0-dev",
-        "rxjs": ">=7.0.0"
-      }
-    },
-    "node_modules/@ngxs/logger-plugin": {
-      "version": "20.1.0",
-      "resolved": "https://registry.npmjs.org/@ngxs/logger-plugin/-/logger-plugin-20.1.0.tgz",
-      "integrity": "sha512-ocRgzCJ0kPGHwnRi7mbeqBS+QvIdz2ffBIb4LGab5OwHVJDSV0JTVvKNAH/LsSaqIKLLwW+eUQT41zw2nBkmJA==",
-      "license": "MIT",
-      "dependencies": {
-        "tslib": "^2.3.0"
-      },
-      "funding": {
-        "type": "opencollective",
-        "url": "https://opencollective.com/ngxs"
-      },
-      "peerDependencies": {
-        "@angular/core": ">=20.0.0 <21.0.0",
-        "@ngxs/store": "^20.1.0 || ^20.1.0-dev",
-        "rxjs": ">=7.0.0"
-      }
-    },
-    "node_modules/@ngxs/store": {
-      "version": "20.1.0",
-      "resolved": "https://registry.npmjs.org/@ngxs/store/-/store-20.1.0.tgz",
-      "integrity": "sha512-Ypceg/FS8NBFxQqiKCa1PzLVLevklHSC2marvwcLwv+ZWpSn43qFSRCeDdcpdxmrZuqdilCLpD45IY3+/1METQ==",
-      "license": "MIT",
-      "dependencies": {
-        "tslib": "^2.3.0"
-      },
-      "funding": {
-        "type": "opencollective",
-        "url": "https://opencollective.com/ngxs"
-      },
-      "peerDependencies": {
-        "@angular/core": ">=20.0.0 <21.0.0",
-        "rxjs": ">=7.0.0"
       }
     },
     "node_modules/@npmcli/agent": {

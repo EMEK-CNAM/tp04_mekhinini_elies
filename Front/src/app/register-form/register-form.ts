@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { Register } from '../store/auth.state';
 
 @Component({
     standalone: true,
@@ -41,7 +43,11 @@ import { Router } from '@angular/router';
 export class RegisterFormComponent implements OnInit {
     registerForm!: FormGroup;
 
-    constructor(private fb: FormBuilder, private router: Router) { }
+    constructor(
+        private fb: FormBuilder,
+        private router: Router,
+        private store: Store
+    ) { }
 
     ngOnInit(): void {
         this.registerForm = this.fb.group({
@@ -68,11 +74,24 @@ export class RegisterFormComponent implements OnInit {
             return;
         }
 
-        // TODO: send registration data to server
-        console.log('Registration data', this.registerForm.value);
+        const { fullName, email, password } = this.registerForm.value;
+        const [prenom, ...nomParts] = fullName.split(' ');
+        const nom = nomParts.join(' ') || prenom;
 
-        // After successful registration, navigate to login
-        this.router.navigate(['/login']);
+        this.store.dispatch(new Register({
+            nom,
+            prenom,
+            email,
+            password
+        })).subscribe({
+            next: () => {
+                this.router.navigate(['/pollutions']);
+            },
+            error: (err) => {
+                console.error('Erreur lors de l\'inscription:', err);
+                alert('Erreur lors de l\'inscription. Veuillez réessayer.');
+            }
+        });
     }
 
     goToLogin(): void {

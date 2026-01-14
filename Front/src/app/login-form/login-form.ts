@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FavoritesService } from '../services/favorites.service';
+import { Store } from '@ngxs/store';
+import { Login } from '../store/auth.state';
 
 @Component({
     selector: 'app-login-form',
@@ -17,17 +19,16 @@ export class LoginFormComponent {
 
     constructor(
         private router: Router,
-        private favoritesService: FavoritesService
+        private favoritesService: FavoritesService,
+        private store: Store
     ) { }
 
     onSubmit(): void {
-        const username = this.email.split('@')[0];
-        localStorage.setItem('app:isLoggedIn', 'true');
-        localStorage.setItem('app:username', username);
-
-        this.favoritesService.setCurrentUser(username);
-
-        window.location.href = '/pollutions';
+        this.store.dispatch(new Login(this.email, this.password)).subscribe(() => {
+            const username = this.email.split('@')[0];
+            this.favoritesService.setCurrentUser(username);
+            this.router.navigate(['/pollutions']);
+        });
     }
 
     onRegister(): void {

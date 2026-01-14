@@ -1,6 +1,5 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { CommonModule } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PollutionService } from '../services/pollution.service';
@@ -19,6 +18,9 @@ export class PollutionForm implements OnInit {
     pollutionId?: string;
     errorMessage: string | null = null;
     successMessage: string | null = null;
+    selectedFile: File | null = null;
+    previewUrl: string | null = null;
+    uploadProgress: number = 0;
 
     constructor(
         private fb: FormBuilder,
@@ -51,13 +53,66 @@ export class PollutionForm implements OnInit {
             this.svc.getById(id).subscribe({
                 next: (pollution) => {
                     this.pollutionForm.patchValue(pollution);
+                    if (pollution.photo_url) {
+                        this.previewUrl = pollution.photo_url;
+                    }
                 },
                 error: (err) => console.error('Erreur chargement:', err)
             });
         }
     }
 
-    onSubmit(): void {
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+
+            // Vérification du type de fichier
+            if (!file.type.startsWith('image/')) {
+                this.errorMessage = 'Veuillez sélectionner une image';
+                return;
+            }
+
+            // Vérification de la taille (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                this.errorMessage = 'L\'image ne doit pas dépasser 5MB';
+                return;
+            }
+
+            this.selectedFile = file;
+            this.errorMessage = null;
+
+            // Créer un aperçu
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.previewUrl = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    removeImage(): void {
+        this.selectedFile = null;
+        this.previewUrl = null;
+        this.pollutionForm.patchValue({ photo_url: '' });
+    }
+
+    private async uploadImage(): Promise<string | null> {
+        if (!this.selectedFile) return null;
+
+        // Simuler un upload - Dans un vrai projet, vous feriez un appel API
+        // Pour l'instant, on convertit en base64
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                resolve(reader.result as string);
+            };
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(this.selectedFile!);
+        });
+    }
+
+    async onSubmit(): Promise<void> {
         if (this.pollutionForm.invalid) {
             this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
             return;
@@ -65,6 +120,16 @@ export class PollutionForm implements OnInit {
 
         this.errorMessage = null;
         this.successMessage = null;
+
+        // Upload de l'image si une nouvelle image est sélectionnée
+        if (this.selectedFile) {
+            this.uploadProgress = 0;
+            const photoUrl = await this.uploadImage();
+            if (photoUrl) {
+                this.pollutionForm.patchValue({ photo_url: photoUrl });
+            }
+            this.uploadProgress = 100;
+        }
 
         const pollution: Pollution = this.pollutionForm.value;
 
